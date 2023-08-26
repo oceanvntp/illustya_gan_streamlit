@@ -28,17 +28,20 @@ D.load_state_dict(torch.load(ckpt_path['D'], map_location='cpu'))
 G.eval()
 D.eval()
 
-def generate_image(seed, threshold, max_generate)->list((np.array, float)):
+def generate_image(seed, threshold, max_generate, bar)->list((np.array, float)):
     set_seed(seed)
     imgs_preds = []
     with torch.no_grad():
-        for _ in range(max_generate):
+        for n in range(max_generate):
             noise = torch.randn(1, 100, 1, 1)
             imtensor = G(noise)
             imarray = imtensor.squeeze(0).detach().numpy().transpose(1, 2, 0)
             pred = D(imtensor).sigmoid().item()
             if pred > threshold:
                 imgs_preds.append((imarray, pred))
+            
+            prog = (n + 1) / max_generate
+            bar.progress(prog)
     return imgs_preds
 
 def imarray2pil(imarray):
@@ -57,7 +60,9 @@ execute = st.sidebar.button('生成する')
 
 
 if execute:
-    imgs_preds = generate_image(seed, threshold, max_generate)
+    bar = st.progress(0)
+    imgs_preds = generate_image(seed, threshold, max_generate, bar)
+
     if len(imgs_preds) == 0:
         st.header(f'本物確率{threshold}以上の画像は生成されませんでした・・・')
         img = Image.open('static/悔しがる人.png').resize((224, 224))
@@ -72,3 +77,4 @@ if execute:
             img = imarray2pil(img)
             st.image(img)
             st.text(f'スコア：{str(np.round(pred, decimals=2))}')
+
