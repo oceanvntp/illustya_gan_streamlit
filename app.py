@@ -12,7 +12,7 @@ from utils import set_seed
 st.title('いらすとやGenerator')
 # モード選択
 mode = st.sidebar.selectbox('ベースモデル',
-                            ('DCGAN', 'LSGAN'))
+                            ('LSGAN', 'DCGAN'))
 
 if mode == 'DCGAN':
     ckpt_path = {'G':'ckpt_DCGAN/netG_epoch_270.pth',
