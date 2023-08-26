@@ -10,12 +10,21 @@ from utils import set_seed
 
 # タイトル
 st.title('いらすとやGenerator')
+# モード選択
+mode = st.sidebar.selectbox('ベースモデル',
+                            ('DCGAN', 'LSGAN'))
 
+if mode == 'DCGAN':
+    ckpt_path = {'G':'ckpt_DCGAN/netG_epoch_270.pth',
+                 'D':'ckpt_DCGAN/netD_epoch_270.pth'}
+elif mode == 'LSGAN':
+    ckpt_path = {'G':'ckpt_LSGAN/netG_epoch_541.pth',
+                 'D':'ckpt_LSGAN/netD_epoch_541.pth'}    
 
 G = Generator()
 D = Discriminator()
-G.load_state_dict(torch.load('netG_epoch_541.pth', map_location='cpu'))
-D.load_state_dict(torch.load('netD_epoch_541.pth', map_location='cpu'))
+G.load_state_dict(torch.load(ckpt_path['G'], map_location='cpu'))
+D.load_state_dict(torch.load(ckpt_path['D'], map_location='cpu'))
 G.eval()
 D.eval()
 
@@ -44,6 +53,7 @@ seed = st.sidebar.number_input(label='シード', min_value=0, step=1)
 threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=1.0, value=0.5)
 max_generate = st.sidebar.number_input(label='最大生成枚数', min_value=1, value=100)
 execute = st.sidebar.button('生成する')
+
 
 
 if execute:
