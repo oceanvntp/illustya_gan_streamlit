@@ -56,6 +56,7 @@ seed = st.sidebar.number_input(label='シード', min_value=0, step=1)
 threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=1.0, value=0.5)
 max_generate = st.sidebar.number_input(label='最大生成枚数', min_value=1, value=100)
 execute = st.sidebar.button('生成する')
+columns = 5
 
 
 
@@ -71,10 +72,30 @@ if execute:
     else:    
         st.header('生成した画像')
         st.text(f'{len(imgs_preds)}枚の画像ができました！')
-        for img_pred in imgs_preds:
-            img = img_pred[0]
-            pred = img_pred[1]
-            img = imarray2pil(img)
-            st.image(img)
-            st.text(f'スコア：{str(np.round(pred, decimals=2))}')
+        split_imgs_preds = []#
+        l = len(imgs_preds)#
+        q = l // columns#
+        for i in range(q + 1):#
+            img_pred = imgs_preds[i*columns:(i+1)*columns]#
+            split_imgs_preds.append(img_pred)#
+        
+        for img_pred_list in split_imgs_preds:
+            col = st.columns(columns)
+            
+            for i, img_pred in enumerate(img_pred_list):
+                img = img_pred[0]
+                img = imarray2pil(img)
+                pred = img_pred[1]
+                with col[i]:
+                    st.image(img)
+                    st.text(f'スコア：{str(np.round(pred, decimals=2))}')
+                    
+        
+        
+        # for img_pred in imgs_preds:
+        #     img = img_pred[0]
+        #     pred = img_pred[1]
+        #     img = imarray2pil(img)
+        #     st.image(img)
+        #     st.text(f'スコア：{str(np.round(pred, decimals=2))}')
 
