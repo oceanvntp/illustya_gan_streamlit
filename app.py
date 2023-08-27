@@ -36,7 +36,11 @@ def generate_image(seed, threshold, max_generate, bar)->list((np.array, float)):
             noise = torch.randn(1, 100, 1, 1)
             imtensor = G(noise)
             imarray = imtensor.squeeze(0).detach().numpy().transpose(1, 2, 0)
-            pred = D(imtensor).sigmoid().item()
+            if mode == 'LSGAN':
+                pred = D(imtensor).sigmoid().item()
+            elif mode == 'DCGAN':
+                pred = D(imtensor).item()
+                
             if pred > threshold:
                 imgs_preds.append((imarray, pred))
             
@@ -61,7 +65,7 @@ columns = 5
 
 
 if execute:
-    bar = st.progress(0)
+    bar = st.progress(value=0, text='Now generating. Please wait...')
     imgs_preds = generate_image(seed, threshold, max_generate, bar)
 
     if len(imgs_preds) == 0:
@@ -72,16 +76,18 @@ if execute:
     else:    
         st.header('生成した画像')
         st.text(f'{len(imgs_preds)}枚の画像ができました！')
+
+        # 推論で得た画像リストを、columns数ごとに分割する
         split_imgs_preds = []#
         l = len(imgs_preds)#
         q = l // columns#
         for i in range(q + 1):#
             img_pred = imgs_preds[i*columns:(i+1)*columns]#
-            split_imgs_preds.append(img_pred)#
+            split_imgs_preds.append(img_pred)
         
+        # columns列で折り返し表示
         for img_pred_list in split_imgs_preds:
-            col = st.columns(columns)
-            
+            col = st.columns(columns)            
             for i, img_pred in enumerate(img_pred_list):
                 img = img_pred[0]
                 img = imarray2pil(img)
