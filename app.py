@@ -56,10 +56,10 @@ def imarray2pil(imarray):
 seed = st.sidebar.number_input(label='シード', min_value=0, step=1)
 
 if mode == 'LSGAN':
-    initial_value = 0.5
+    threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=1.0, value=0.5)
 elif mode == 'DCGAN':
-    initial_value = 0.01
-threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=1.0, value=initial_value)
+    threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=0.5, value=0.01)
+
 
 max_generate = st.sidebar.number_input(label='最大生成枚数', min_value=1, value=100)
 execute = st.sidebar.button('生成する')
