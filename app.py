@@ -36,10 +36,7 @@ def generate_image(seed, threshold, max_generate, bar)->list((np.array, float)):
             noise = torch.randn(1, 100, 1, 1)
             imtensor = G(noise)
             imarray = imtensor.squeeze(0).detach().numpy().transpose(1, 2, 0)
-            if mode == 'LSGAN':
-                pred = D(imtensor).sigmoid().item()
-            elif mode == 'DCGAN':
-                pred = D(imtensor).item()
+            pred = D(imtensor).sigmoid().item()
                 
             if pred > threshold:
                 imgs_preds.append((imarray, pred))
@@ -57,7 +54,13 @@ def imarray2pil(imarray):
 
 # サイドバー
 seed = st.sidebar.number_input(label='シード', min_value=0, step=1)
-threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=1.0, value=0.5)
+
+if mode == 'LSGAN':
+    initial_value = 0.5
+elif mode == 'DVGAN':
+    initial_value = 0.01
+threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=1.0, value=initial_value)
+
 max_generate = st.sidebar.number_input(label='最大生成枚数', min_value=1, value=100)
 execute = st.sidebar.button('生成する')
 columns = 5
