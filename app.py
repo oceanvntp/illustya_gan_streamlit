@@ -54,13 +54,15 @@ def imarray2pil(imarray):
 
 # サイドバー
 seed = st.sidebar.number_input(label='シード', min_value=0, step=1)
+st.sidebar.write('---')
 
 if mode == 'LSGAN':
-    threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=1.0, value=0.5)
+    threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=1.0, value=0.0)
 elif mode == 'DCGAN':
-    threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=0.5, value=0.01)
+    threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=0.2, value=0.0)
+st.sidebar.text('閾値を高くすると判定が厳しくなり、\n画像が減ります。\n基本的に動かさなくていいです。')
 
-
+st.sidebar.write('---')
 max_generate = st.sidebar.number_input(label='最大生成枚数', min_value=1, value=100)
 execute = st.sidebar.button('生成する')
 columns = 5
