@@ -57,7 +57,7 @@ seed = st.sidebar.number_input(label='シード', min_value=0, step=1)
 
 if mode == 'LSGAN':
     initial_value = 0.5
-elif mode == 'DVGAN':
+elif mode == 'DCGAN':
     initial_value = 0.01
 threshold = st.sidebar.slider(label='判別機の閾値', min_value=0.0, max_value=1.0, value=initial_value)
 
